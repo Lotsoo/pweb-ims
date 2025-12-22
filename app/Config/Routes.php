@@ -14,6 +14,7 @@ $routes->get('/dashboard', 'Dashboard::index', ['filter' => 'auth']);
 $routes->group('products', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Products::index');
     $routes->get('create', 'Products::create');
+    $routes->get('show/(:num)', 'Products::show/$1');
     $routes->post('store', 'Products::store');
     $routes->get('edit/(:num)', 'Products::edit/$1');
     $routes->post('update/(:num)', 'Products::update/$1');

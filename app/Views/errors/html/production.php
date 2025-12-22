@@ -19,6 +19,19 @@
         <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-orange-400 mb-4"><?= lang('Errors.whoops') ?></h1>
         <p class="text-xl text-gray-300 mb-8 font-medium">aduh program ada error</p>
         
+        <?php if (! empty($exception)) : ?>
+            <div class="mb-8 p-4 bg-red-900/20 border border-red-500/20 rounded-xl text-left">
+                <p class="text-red-300 font-mono text-sm break-all">
+                    <?= esc($exception->getMessage()) ?>
+                </p>
+                <?php if (ENVIRONMENT !== 'production') : ?>
+                    <p class="text-gray-400 font-mono text-xs mt-2">
+                        <?= esc($exception->getFile()) ?>:<?= esc($exception->getLine()) ?>
+                    </p>
+                <?php endif; ?>
+            </div>
+        <?php endif; ?>
+        
         <a href="<?= base_url('/') ?>" class="group px-8 py-3 bg-red-600 hover:bg-red-500 text-white rounded-xl transition-all duration-300 flex items-center gap-2 shadow-lg shadow-red-500/20">
             <svg class="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
