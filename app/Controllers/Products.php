@@ -22,6 +22,7 @@ class Products extends BaseController
         $data['products'] = $this->productModel->select('products.*, categories.name as category_name')
                                              ->join('categories', 'categories.id = products.category_id')
                                              ->findAll();
+        $data['categories'] = $this->categoryModel->findAll();
         return view('products/index', $data);
     }
 
@@ -59,6 +60,20 @@ class Products extends BaseController
         ]);
 
         return redirect()->to('/products')->with('success', 'Product created successfully');
+    }
+
+    public function show($id)
+    {
+        $data['product'] = $this->productModel->select('products.*, categories.name as category_name')
+                                             ->join('categories', 'categories.id = products.category_id')
+                                             ->where('products.id', $id)
+                                             ->first();
+        
+        if (empty($data['product'])) {
+            return redirect()->to('/products')->with('error', 'Product not found');
+        }
+        
+        return view('products/show', $data);
     }
 
     public function edit($id)
