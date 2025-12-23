@@ -26,6 +26,7 @@ $routes->group('transactions', ['filter' => 'auth'], function ($routes) {
     $routes->get('/', 'Transactions::index');
     $routes->get('create', 'Transactions::create');
     $routes->post('store', 'Transactions::store');
+    $routes->get('show/(:num)', 'Transactions::show/$1');
     $routes->get('edit/(:num)', 'Transactions::edit/$1');
     $routes->post('update/(:num)', 'Transactions::update/$1');
     $routes->get('delete/(:num)', 'Transactions::delete/$1');
