@@ -163,20 +163,77 @@
                         </svg>
                         <input type="text" placeholder="Cari..." class="w-64 pl-9 pr-4 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary">
                     </div>
-                    <!-- Notifications -->
-                    <button class="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors relative">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                        </svg>
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-accent rounded-full"></span>
-                    </button>
+                    <?php
+                    $threshold = 10;
+                    $pm = new \App\Models\ProductModel();
+                    $lowStockItems = $pm->select('products.*, categories.name as category_name')
+                                        ->join('categories', 'categories.id = products.category_id', 'left')
+                                        ->where('stock_quantity <', $threshold)
+                                        ->orderBy('stock_quantity', 'ASC')
+                                        ->findAll();
+                    $lowStockCount = count($lowStockItems);
+                    ?>
+                    <div class="relative">
+                        <button id="notifBtn" class="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors relative">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                            </svg>
+                            <?php if ($lowStockCount > 0): ?>
+                                <span class="absolute top-1.5 right-1.5 w-4 h-4 bg-destructive text-[10px] text-white rounded-full flex items-center justify-center"><?= $lowStockCount ?></span>
+                            <?php endif; ?>
+                        </button>
+                        <div id="notifDropdown" class="hidden absolute right-0 mt-2 w-80 bg-card border border-border rounded-lg shadow-lg z-50">
+                            <div class="p-4 border-b border-border flex items-center justify-between">
+                                <p class="text-sm font-medium text-foreground">Stok Menipis</p>
+                                <span class="px-2 py-0.5 bg-destructive/10 text-destructive text-xs font-medium rounded-full"><?= $lowStockCount ?> item</span>
+                            </div>
+                            <div class="max-h-64 overflow-y-auto divide-y divide-border">
+                                <?php if ($lowStockCount === 0): ?>
+                                    <div class="p-4 text-sm text-muted-foreground">Semua stok aman.</div>
+                                <?php else: ?>
+                                    <?php foreach ($lowStockItems as $item): ?>
+                                        <div class="px-4 py-3 flex items-center justify-between">
+                                            <div>
+                                                <p class="text-sm font-medium text-foreground"><?= esc($item['name']) ?></p>
+                                                <p class="text-xs text-muted-foreground"><?= esc($item['category_name'] ?? 'Tanpa Kategori') ?></p>
+                                            </div>
+                                            <div class="flex items-center gap-2">
+                                                <span class="px-2 py-1 bg-destructive/10 text-destructive text-xs font-medium rounded-md"><?= $item['stock_quantity'] ?> unit</span>
+                                                <a href="<?= base_url('transactions/create') ?>" class="text-xs text-primary hover:underline">Request Stok</a>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </header>
 
             <!-- Page Content -->
             <main class="flex-1 overflow-y-auto p-6 bg-background">
+                <?php if (isset($lowStockCount) && $lowStockCount > 0): ?>
+                    <div class="mb-4 bg-destructive/10 border border-destructive/20 text-destructive rounded-lg p-4 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M4.93 4.93a10 10 0 1114.14 14.14A10 10 0 014.93 4.93z"/></svg>
+                            <p class="text-sm">Ada <?= $lowStockCount ?> produk dengan stok rendah. Segera buat <a class="underline" href="<?= base_url('transactions/create') ?>">request stok</a> untuk ketersediaan barang.</p>
+                        </div>
+                        <a href="<?= base_url('products') ?>" class="text-xs text-muted-foreground hover:text-foreground">Lihat produk</a>
+                    </div>
+                <?php endif; ?>
                 <?= $this->renderSection('content') ?>
             </main>
+            <script>
+                const btn = document.getElementById('notifBtn');
+                const dd = document.getElementById('notifDropdown');
+                if (btn && dd) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        dd.classList.toggle('hidden');
+                    });
+                    document.addEventListener('click', () => dd.classList.add('hidden'));
+                }
+            </script>
         </div>
     </div>
 </body>
