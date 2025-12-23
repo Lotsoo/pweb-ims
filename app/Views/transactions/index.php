@@ -64,6 +64,7 @@
                         <?= esc($transaction['notes']) ?>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                        <a href="<?= base_url('transactions/show/' . $transaction['id']) ?>" class="text-blue-500 hover:text-blue-600 mr-3">View</a>
                         <a href="<?= base_url('transactions/edit/' . $transaction['id']) ?>" class="text-primary hover:text-primary/80 mr-3">Edit</a>
                         <a href="<?= base_url('transactions/delete/' . $transaction['id']) ?>" class="text-destructive hover:text-destructive/80" onclick="return confirm('Are you sure? This will adjust product stock accordingly.');">Delete</a>
                     </td>
