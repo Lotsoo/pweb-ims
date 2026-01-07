@@ -33,6 +33,10 @@ class TransactionDetails extends Migration
                 'type'       => 'TEXT',
                 'null'       => true,
             ],
+            'keterangan' => [
+                'type'       => 'TEXT',
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

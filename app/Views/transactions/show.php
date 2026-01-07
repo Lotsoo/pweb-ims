@@ -52,6 +52,7 @@
                         <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">SKU</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Quantity</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Notes</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Keterangan</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-border">
@@ -79,6 +80,9 @@
                         </td>
                         <td class="px-6 py-4 text-sm text-muted-foreground">
                             <?= esc($detail['notes'] ?: '-') ?>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-muted-foreground">
+                            <?= esc($detail['keterangan'] ?? '-') ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>
